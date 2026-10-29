@@ -1,0 +1,12 @@
+{
+  "name": "ChatbarCapsLock",
+  "description": "Sohbet çubuğundaki buton açık olduğunda mesajları büyük harfe çevirir.",
+  "authors": [
+    {
+      "name": "Ehed",
+      "id": "0"
+    }
+  ],
+  "version": "1.0.0",
+  "main": "index.js"
+}
