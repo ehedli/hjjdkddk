@@ -1,39 +1,26 @@
-import { definePlugin } from "@utils/types";
-import { chatInputButtons } from "@api/ChatInputButtons";
-import { React } from "@webpack/common";
+import { patcher } from "@vendetta/patcher";
+import { findByProps } from "@vendetta/metro";
 
-let capsLockActive = false;
+// Find the module that contains the sendMessage function
+const MessageActions = findByProps("sendMessage", "editMessage");
 
-// Caps Lock ikonu (SVG bileşeni)
-const CapsIcon = () =>
-    React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "currentColor" },
-        React.createElement("path", { d: "M12 3L4 11H9V21H15V11H20L12 3Z" })
-    );
-
-export default definePlugin({
-    name: "ChatbarCapsLock",
-    description: "Sohbet çubuğundaki buton açık olduğunda mesajları büyük harfe çevirir.",
-    authors: [{ name: "Ehed", id: 0n }],
-
-    start() {
-        chatInputButtons.add("capslock-toggle", () => ({
-            icon: CapsIcon,
-            tooltip: capsLockActive ? "Caps Lock: AÇIK" : "Caps Lock: KAPALI",
-            selected: capsLockActive,
-            onClick: () => {
-                capsLockActive = !capsLockActive;
-            }
-        }));
-    },
-
-    stop() {
-        chatInputButtons.remove("capslock-toggle");
-        capsLockActive = false;
-    },
-
-    preSend(channelId, messageObj) {
-        if (capsLockActive && messageObj?.content) {
-            messageObj.content = messageObj.content.toLocaleUpperCase("tr-TR");
-        }
-    }
+// Patch the sendMessage function – the "before" hook runs before the original
+// function, allowing us to modify its arguments.
+const unpatch = patcher.before("sendMessage", MessageActions, (args) => {
+  // args[0] is the channel ID, args[1] is the message object
+  if (args[1] && typeof args[1].content === "string") {
+    // Force the message content to uppercase
+    args[1].content = args[1].content.toUpperCase();
+  }
 });
+
+// Export start/stop functions so Valenced can manage the plugin
+export default {
+  onLoad: () => {
+    // Plugin loaded
+  },
+  onUnload: () => {
+    // Remove the patch when the plugin is disabled/uninstalled
+    unpatch();
+  },
+};
