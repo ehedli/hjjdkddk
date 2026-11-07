@@ -1,12 +1,17 @@
 {
-  "name": "ChatbarCapsLock",
-  "description": "Sohbet çubuğundaki buton açık olduğunda mesajları büyük harfe çevirir.",
+  "name": "Caps Lock Sender",
+  "description": "Automatically converts every outgoing message to uppercase (Caps‑Lock style).",
   "authors": [
     {
-      "name": "Ehed",
-      "id": "0"
+      "name": "YourName",
+      "id": "your-discord-id"
     }
   ],
+  "main": "index.js",
   "version": "1.0.0",
-  "main": "index.js"
+  "icon": "https://example.com/icon.png",
+  "required": true,
+  "vendetta": {
+    "icon": "CapsLockIcon"
+  }
 }
